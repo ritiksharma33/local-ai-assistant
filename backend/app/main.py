@@ -4,32 +4,45 @@ from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.api import endpoints
 from app.api.deps import HTTPClientProvider
+from app.db.database import async_engine, Base
 
+# The lifespan context manager guarantees this runs before any requests are accepted
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup behavior: The connection pool gets initialized when needed
+    # --- STARTUP LOGIC ---
+    print("\n[System] Initializing Database...")
+    async with async_engine.begin() as conn:
+        # Drop existing tables to clear corrupted states, then recreate them
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+    print("[System] SQLite Telemetry DB initialized and tables created successfully.")
+    
+    # Yield control back to FastAPI to start accepting HTTP requests
     yield
-    # Shutdown behavior: Clean up connections gracefully on server termination
-    print("\nShutting down backend services... Closing connection pools.")
+    
+    # --- SHUTDOWN LOGIC ---
+    print("\n[System] Shutting down backend services...")
     await HTTPClientProvider.close_client()
+    await async_engine.dispose()
+    print("[System] Connection pools closed cleanly.")
 
-# Instantiate the application with structured lifespan management
+# Instantiate the application with the lifespan manager
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     lifespan=lifespan
 )
 
-# Configure CORS so your React application on localhost:5173 can access this API safely
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Restrict this to specific origins in a strict production cloud setup
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include the router under the production API version layout string (/api/v1)
+# Include the router
 app.include_router(endpoints.router, prefix=settings.API_V1_STR, tags=["Generation Engine"])
 
 @app.get("/", tags=["Health Check"])
