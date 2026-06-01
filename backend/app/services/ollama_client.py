@@ -1,6 +1,8 @@
+import json
+import time
+from typing import AsyncGenerator
 import httpx
 from fastapi import HTTPException
-import time
 from app.schemas.chat import BasePromptRequest, BaseGenerationResponse
 
 class OllamaClientService:
@@ -57,4 +59,40 @@ class OllamaClientService:
             raise HTTPException(
                 status_code=503,
                 detail=f"Local engine unreachable. Ensure service is active: {err}"
+            )
+
+    async def stream_generation(self, payload: BasePromptRequest) -> AsyncGenerator[str, None]:
+        """
+        Streams text tokens dynamically as they are calculated by the local SLM engine.
+        Uses HTTPX connection stream management to minimize buffer memory retention.
+        """
+        native_payload = {
+            "model": payload.model,
+            "prompt": payload.prompt,
+            "stream": True,  # Instructs Ollama to push sequential line-delimited events
+            "options": {
+                "temperature": payload.temperature
+            }
+        }
+
+        try:
+            async with self.client.stream("POST", "/api/generate", json=native_payload) as response:
+                response.raise_for_status()
+                
+                async for line in response.aiter_lines():
+                    if line:
+                        parsed_chunk = json.loads(line)
+                        token = parsed_chunk.get("response", "")
+                        if token:
+                            yield token
+
+        except httpx.HTTPStatusError as err:
+            raise HTTPException(
+                status_code=err.response.status_code,
+                detail=f"Ollama streaming exception: {err.response.text}"
+            )
+        except httpx.RequestError as err:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Local engine unreachable during streaming: {err}"
             )
