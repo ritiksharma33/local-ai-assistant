@@ -15,6 +15,7 @@ class OllamaClientService:
             "model": payload.model,
             "prompt": payload.prompt,
             "stream": False,
+            "keep_alive": "2m",  # <-- Added: Forces auto-unload after 120 seconds of idle time
             "options": {
                 "temperature": payload.temperature
             }
@@ -70,6 +71,7 @@ class OllamaClientService:
             "model": payload.model,
             "prompt": payload.prompt,
             "stream": True,  # Instructs Ollama to push sequential line-delimited events
+            "keep_alive": "2m",  # <-- Added: Ensures streaming connections also trigger the idle timer when finished
             "options": {
                 "temperature": payload.temperature
             }
