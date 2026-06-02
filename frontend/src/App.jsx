@@ -19,7 +19,7 @@ export default function App() {
           <ChatInterface />
         </div>
 
-        {/* Telemetry Dashboard - Always mounted, but hidden if not active */}
+        {/* Telemetry Dashboar - Always mounted, but hidden if not active */}
         <div className={`h-full w-full ${currentView === 'telemetry' ? 'block' : 'hidden'}`}>
           <TelemetryDashboard />
         </div>
