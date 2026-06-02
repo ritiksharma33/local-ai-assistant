@@ -1,1 +1,83 @@
 .venv/
+# ==========================================
+# 1. OS & System Specific Files
+# ==========================================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# ==========================================
+# 2. Frontend (Node / Vite / React)
+# ==========================================
+# Dependencies
+frontend/node_modules/
+frontend/jspm_packages/
+
+# Build & Distribution
+frontend/dist/
+frontend/dist-ssr/
+frontend/out/
+
+# Cache & Temporary Files
+frontend/.vite/
+frontend/.nuxt/
+frontend/.next/
+frontend/.cache/
+frontend/.eslintcache/
+
+# Local Environment Overrides
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# ==========================================
+# 3. Backend (Python / FastAPI)
+# ==========================================
+# Byte-compiled / optimized / DLL files
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+backend/.venv/
+venv/
+ENV/
+env/
+
+# Package & Distribution state
+backend/build/
+backend/develop-eggs/
+backend/dist/
+backend/downloads/
+backend/eggs/
+backend/.eggs/
+backend/lib/
+backend/lib64/
+backend/parts/
+backend/sdist/
+backend/var/
+backend/wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================================
+# 4. Databases & Telemetry Storage
+# ==========================================
+# Keeps your local telemetry history from being committed to GitHub
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================================
+# 5. IDEs & Editors
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
