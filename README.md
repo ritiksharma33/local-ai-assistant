@@ -4,6 +4,14 @@
 
 A full-stack, hardware-optimized orchestration platform for running and managing Smaller Language Models (SLMs) entirely locally. Built specifically to maximize performance on constrained Unified Memory architectures (e.g., Apple Silicon M1 8GB) without triggering system-locking disk swaps.
 
+
+https://github.com/user-attachments/assets/48455c00-0e22-42af-90ed-89b338ce1fa7
+
+
+
+
+
+
 ## 🚀 Overview
 
 This platform acts as a custom local API gateway and interactive client for LLMs. It wraps the Ollama engine in an async FastAPI backend, providing advanced routing pipelines, structured telemetry, and—most importantly—an **Active Memory Guardrail** that safely manages VRAM allocations when hot-swapping heavy parameter models.
