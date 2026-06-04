@@ -67,7 +67,7 @@ ollama pull dolphin-llama3
 
 
 
----
+
 
 ## ⚙️ Installation & Setup
 
